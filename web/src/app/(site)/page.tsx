@@ -1,44 +1,32 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
-import { EmptyCatalog, ProductCard } from "@/components/ProductCard";
-import { getFeatured, getSettings } from "@/lib/products";
+import { Reveal } from "@/components/Reveal";
+import { Showcase, type Slide } from "@/components/Showcase";
+import { formatPrice, getFeatured, getProducts, getSettings } from "@/lib/products";
 
-async function Hero() {
-  const s = await getSettings();
-  return (
-    <section className="mx-auto grid w-full max-w-7xl gap-8 px-5 pt-10 md:grid-cols-12 md:px-10 md:pt-20">
-      <h1 className="font-display text-[clamp(3rem,9vw,8rem)] font-extrabold leading-[0.92] tracking-tighter md:col-span-9" style={{ fontStretch: "85%" }}>
-        {s.hero_title}
-      </h1>
-      <p className="max-w-xs self-end text-lg text-muted md:col-span-3">{s.hero_subtitle}</p>
-      {s.hero_image && (
-        <div className="relative mt-4 aspect-[16/9] md:col-span-12">
-          <Image src={s.hero_image} alt="" fill priority sizes="100vw" className="object-cover" />
-        </div>
-      )}
-    </section>
-  );
+async function Vitrine() {
+  const featured = await getFeatured();
+  const items = featured.length ? featured : (await getProducts()).slice(0, 8);
+  const slides: Slide[] = items.length
+    ? items.map((p) => ({ slug: p.slug, name: p.name, category: p.category, price: formatPrice(p.price_cents), image: p.images[0] ?? null }))
+    : [{ slug: null, name: "Montilha 3D", category: "", price: "Catálogo em breve", image: null }];
+  return <Showcase slides={slides} />;
 }
 
-const slots = [
-  "md:col-span-7",
-  "md:col-span-4 md:col-start-9 md:mt-32",
-  "md:col-span-5 md:col-start-2",
-  "md:col-span-5 md:col-start-8",
-];
-
-async function Featured() {
-  const items = await getFeatured();
-  if (!items.length) return <EmptyCatalog />;
+async function Intro() {
+  const s = await getSettings();
   return (
-    <div className="grid gap-x-8 gap-y-16 md:grid-cols-12">
-      {items.slice(0, 4).map((p, i) => (
-        <div key={p.id} className={slots[i]}>
-          <ProductCard p={p} sizes="(min-width:768px) 55vw, 100vw" />
-        </div>
-      ))}
-    </div>
+    <Reveal as="section" className="mx-auto mt-24 grid w-full max-w-7xl gap-8 border-t border-line px-5 pt-14 md:grid-cols-12 md:px-10">
+      <h1 className="font-display text-[clamp(2.5rem,6vw,5rem)] font-extrabold leading-[0.95] tracking-tighter md:col-span-8" style={{ fontStretch: "85%" }}>
+        {s.hero_title}
+      </h1>
+      <div className="self-end md:col-span-4">
+        <p className="text-lg text-muted">{s.hero_subtitle}</p>
+        <Link href="/loja" className="mt-5 inline-block font-mono text-xs uppercase tracking-widest underline underline-offset-4 hover:text-brand">
+          Ver toda a loja →
+        </Link>
+      </div>
+    </Reveal>
   );
 }
 
@@ -52,21 +40,15 @@ const specs = [
 export default function Home() {
   return (
     <>
-      <Suspense fallback={<div className="h-[40vh]" />}>
-        <Hero />
+      <Suspense fallback={<div className="h-[70vh]" />}>
+        <Vitrine />
       </Suspense>
 
-      <section className="mx-auto mt-28 w-full max-w-7xl px-5 md:px-10">
-        <div className="mb-10 flex items-baseline justify-between border-b border-line pb-4">
-          <h2 className="font-mono text-sm uppercase tracking-widest">Em destaque</h2>
-          <Link href="/loja" className="text-sm font-medium hover:text-brand">Ver toda a loja</Link>
-        </div>
-        <Suspense fallback={<div className="h-96" />}>
-          <Featured />
-        </Suspense>
-      </section>
+      <Suspense fallback={<div className="h-64" />}>
+        <Intro />
+      </Suspense>
 
-      <section id="como-e-feito" className="mx-auto mt-40 grid w-full max-w-7xl gap-12 px-5 md:grid-cols-12 md:px-10">
+      <Reveal as="section" id="como-e-feito" className="mx-auto mt-40 grid w-full max-w-7xl gap-12 px-5 md:grid-cols-12 md:px-10">
         <h2 className="font-display text-5xl font-extrabold leading-none tracking-tighter md:col-span-5 md:text-6xl">
           Como é feito
         </h2>
@@ -84,7 +66,7 @@ export default function Home() {
             ))}
           </dl>
         </div>
-      </section>
+      </Reveal>
     </>
   );
 }

@@ -27,6 +27,12 @@ export function ProductForm({ product }: { product?: Product }) {
       <label className="block text-sm">Slug (endereço)
         <input name="slug" required className="field mt-1 font-mono" value={slug} onChange={(e) => { setSlug(e.target.value); setSlugEdited(true); }} />
       </label>
+      <label className="block text-sm">Categoria (ex.: Decoração, Organização, Personalizados)
+        <input name="category" maxLength={40} list="categorias" className="field mt-1" defaultValue={v?.category ?? product?.category ?? ""} />
+        <datalist id="categorias">
+          <option value="Decoração" /><option value="Organização" /><option value="Personalizados" /><option value="Colecionáveis" />
+        </datalist>
+      </label>
       <label className="block text-sm">Descrição
         <textarea name="description" rows={5} className="field mt-1" defaultValue={v?.description ?? product?.description} />
       </label>

@@ -7,6 +7,7 @@ export type Product = {
   slug: string;
   name: string;
   description: string;
+  category: string;
   price_cents: number | null;
   images: string[];
   buy_url: string | null;

@@ -4,11 +4,13 @@ import { Logo } from "@/components/LogoMark";
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <header className="mx-auto flex w-full max-w-7xl items-center justify-between px-5 py-6 md:px-10">
-        <Link href="/" aria-label="Montilha 3D, início"><Logo /></Link>
-        <nav className="flex gap-4 text-sm font-medium sm:gap-6">
+      <header className="mx-auto grid w-full max-w-7xl grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 py-6 font-mono text-xs uppercase tracking-widest md:px-10">
+        <nav className="flex gap-4 sm:gap-6">
           <Link href="/loja" className="hover:text-brand">Loja</Link>
-          <Link href="/#como-e-feito" className="hover:text-brand">Sobre</Link>
+          <Link href="/#como-e-feito" className="hidden hover:text-brand sm:inline">Sobre</Link>
+        </nav>
+        <Link href="/" aria-label="Montilha 3D, início" className="normal-case tracking-normal"><Logo /></Link>
+        <nav className="flex justify-end">
           <Link href="/#contato" className="hover:text-brand">Contato</Link>
         </nav>
       </header>

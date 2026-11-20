@@ -55,7 +55,7 @@ export async function saveProduct(_prev: FormState, fd: FormData): Promise<FormS
   const sb = await requireAdmin();
   const text = (k: string) => String(fd.get(k) ?? "").trim();
   const id = text("id");
-  const values = { name: text("name"), slug: text("slug"), description: text("description"), price: text("price"), buy_url: text("buy_url"), position: text("position") };
+  const values = { name: text("name"), slug: text("slug"), description: text("description"), price: text("price"), buy_url: text("buy_url"), position: text("position"), category: text("category").slice(0, 40) };
   const fail = (error: string) => ({ error, values });
 
   if (!values.name) return fail("Informe o nome.");
@@ -99,6 +99,7 @@ export async function saveProduct(_prev: FormState, fd: FormData): Promise<FormS
     name: values.name,
     slug: values.slug,
     description: values.description,
+    category: values.category,
     price_cents,
     buy_url,
     position,
