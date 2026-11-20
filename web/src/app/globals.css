@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f4f1;
+  --foreground: #0b0d10;
+  --muted: #5b6068;
+  --line: #d9dbd6;
+  --brand: #1667c4; /* azul da logo escurecido p/ contraste AA em texto */
+  --logo-ink: #2f3337;
+  --logo-blue: #1e7fe0;
+  --accent: #f47b20;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-brand: var(--brand);
+  --color-logo-ink: var(--logo-ink);
+  --color-logo-blue: var(--logo-blue);
+  --color-accent: var(--accent);
+  --font-logo: var(--font-exo);
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+@layer components {
+  .field {
+    @apply w-full border border-line bg-white px-3 py-2 text-base outline-none focus:border-brand;
+  }
+  .btn {
+    @apply inline-block cursor-pointer border border-foreground bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-brand hover:border-brand;
+  }
+  .btn-ghost {
+    @apply inline-block cursor-pointer border border-line px-4 py-2 text-sm hover:border-foreground;
+  }
+}
