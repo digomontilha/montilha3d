@@ -10,7 +10,11 @@ async function Form({ searchParams }: { searchParams: PageProps<"/admin/login">[
     <form action={login} className="space-y-4">
       {error && (
         <p role="alert" className="border border-red-300 bg-red-50 p-3 text-sm text-red-800">
-          {error === "env" ? "Supabase não configurado." : "E-mail ou senha incorretos."}
+          {error === "env"
+            ? "Supabase não configurado."
+            : error === "forbidden"
+              ? "Este usuário não tem acesso ao painel. Peça para um admin liberar."
+              : "E-mail ou senha incorretos."}
         </p>
       )}
       <label className="block text-sm">E-mail<input name="email" type="email" required autoComplete="email" className="field mt-1" /></label>

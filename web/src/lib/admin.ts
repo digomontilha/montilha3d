@@ -8,6 +8,6 @@ export async function requireAdmin() {
   const { data: { user } } = await sb.auth.getUser();
   if (!user) redirect("/admin/login");
   const { data: ok } = await sb.rpc("is_admin");
-  if (!ok) redirect("/admin/login");
+  if (!ok) redirect("/admin/login?error=forbidden");
   return sb;
 }
