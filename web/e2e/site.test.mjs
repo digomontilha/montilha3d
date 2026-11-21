@@ -188,12 +188,15 @@ test("galeria: miniaturas navegáveis por teclado quando há mais de uma foto", 
   await page.locator('main img[alt^="Foto 2 de 2"]').waitFor();
 });
 
-test("contato: Instagram da marca no rodapé, em nova aba", async () => {
+test("contato: Instagram e TikTok da marca no rodapé, em nova aba", async () => {
   await page.goto(BASE + "/");
-  const ig = page.locator("footer").getByRole("link", { name: /@montilha3d/ });
+  const ig = page.locator("footer").getByRole("link", { name: /Instagram/ });
   assert.equal(await ig.getAttribute("href"), "https://www.instagram.com/montilha3d/");
   assert.equal(await ig.getAttribute("target"), "_blank");
   assert.match(await ig.getAttribute("rel"), /noopener/);
+  const tt = page.locator("footer").getByRole("link", { name: /TikTok/ });
+  assert.equal(await tt.getAttribute("href"), "https://www.tiktok.com/@montilha3d");
+  assert.equal(await tt.getAttribute("target"), "_blank");
 });
 
 test("celular 360px: sem rolagem horizontal e imagens com alt", async () => {

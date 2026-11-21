@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Logo } from "@/components/LogoMark";
 import { Suspense } from "react";
 import { NavLinks, NavList } from "@/components/NavLinks";
-import { INSTAGRAM } from "@/lib/site";
+import { INSTAGRAM, TIKTOK } from "@/lib/site";
+
+const social = "inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white";
 
 export default function SiteLayout({ children }: LayoutProps<"/">) {
   return (
@@ -28,20 +30,28 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <h2 className="font-display text-2xl">Contato</h2>
-            <p className="mt-2 text-muted">Fale com a gente e acompanhe as novidades no Instagram.</p>
+            <p className="mt-2 text-muted">Fale com a gente e acompanhe as novidades no Instagram e no TikTok.</p>
+            <div className="mt-4 flex flex-wrap gap-3">
             <a
               href={INSTAGRAM.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white"
+              className={social}
             >
               <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="3" y="3" width="18" height="18" rx="5" />
                 <circle cx="12" cy="12" r="4" />
                 <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
               </svg>
-              {INSTAGRAM.handle}<span className="sr-only"> no Instagram (abre em nova aba)</span>
+              Instagram<span className="sr-only"> {INSTAGRAM.handle} (abre em nova aba)</span>
             </a>
+            <a href={TIKTOK.url} target="_blank" rel="noopener noreferrer" className={social}>
+              <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
+                <path d="M16.6 2h-3.3v13.2a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .9.1V9a6.2 6.2 0 1 0 5.3 6.2V8.6a7.6 7.6 0 0 0 4.4 1.4V6.7a4.4 4.4 0 0 1-4.4-4.4Z" />
+              </svg>
+              TikTok<span className="sr-only"> {TIKTOK.handle} (abre em nova aba)</span>
+            </a>
+            </div>
           </div>
         </div>
       </footer>
