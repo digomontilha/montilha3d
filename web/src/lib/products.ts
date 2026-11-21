@@ -19,8 +19,8 @@ export type Product = {
 export type Settings = { hero_title: string; hero_subtitle: string; hero_image: string | null };
 
 export const defaultSettings: Settings = {
-  hero_title: "Peças impressas camada por camada.",
-  hero_subtitle: "Design próprio, impressão própria, acabamento à mão.",
+  hero_title: "Produtos 3D para decorar e presentear",
+  hero_subtitle: "",
   hero_image: null,
 };
 

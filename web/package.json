@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "dev:isolado": "node e2e/dev-isolado.mjs",
+    "test:e2e": "node --test --test-concurrency=1 e2e/"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

@@ -1,41 +1,60 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { Gallery } from "@/components/Gallery";
 import { formatPrice, getProduct } from "@/lib/products";
+import { INSTAGRAM } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/produto/[slug]">): Promise<Metadata> {
   const p = await getProduct((await params).slug);
-  return p ? { title: p.name, description: p.description.slice(0, 160) } : {};
+  if (!p) return {};
+  const description = p.description.replace(/\s+/g, " ").trim().slice(0, 160) || `${p.name} no catálogo da Montilha 3D.`;
+  return { title: p.name, description, openGraph: { title: p.name, description, images: p.images.slice(0, 1) } };
 }
 
 async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params"] }) {
-  const p = await getProduct((await params).slug);
+  const p = await getProduct((await params).slug); // só produtos ativos; inativo dá 404 como antes
   if (!p) notFound();
+  const price = formatPrice(p.price_cents);
+  const host = p.buy_url && new URL(p.buy_url).hostname.replace(/^www\./, "");
   return (
-    <div className="grid gap-10 md:grid-cols-12">
-      <div className="space-y-4 md:col-span-7">
-        {p.images.length ? (
-          p.images.map((src, i) => (
-            <div key={src} className="relative aspect-[4/5] bg-line">
-              <Image src={src} alt={`${p.name}, foto ${i + 1}`} fill priority={i === 0} sizes="(min-width:768px) 58vw, 100vw" className="object-cover" />
-            </div>
-          ))
-        ) : (
-          <div className="aspect-[4/5] bg-line" />
-        )}
+    <div className="grid gap-10 md:grid-cols-12 md:gap-12">
+      <div className="md:col-span-7">
+        <Gallery images={p.images} name={p.name} />
       </div>
-      <div className="md:sticky md:top-8 md:col-span-4 md:col-start-9 md:self-start">
-        <h1 className="font-display text-5xl font-extrabold leading-none tracking-tighter">{p.name}</h1>
-        <p className="mt-5 font-mono text-xl">{formatPrice(p.price_cents)}</p>
-        <p className="mt-8 whitespace-pre-line leading-relaxed text-muted">{p.description}</p>
+      <div className="md:col-span-5 md:sticky md:top-8 md:self-start">
+        {p.category && <p className="mb-3 text-sm font-medium uppercase tracking-wider text-muted">{p.category}</p>}
+        <h1 className="font-display text-[clamp(2.25rem,4.2vw,3.5rem)] leading-[1.05] [text-wrap:balance]">{p.name}</h1>
+        <p id="situacao" className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
+          {price && <span className="text-4xl font-bold text-brand">{price}</span>}
+          {!p.buy_url && (
+            <span className="rounded-full bg-amber-100 px-4 py-1.5 text-lg font-semibold text-amber-900 ring-1 ring-amber-800/30">Em breve</span>
+          )}
+        </p>
+
         {p.buy_url ? (
-          <a href={p.buy_url} target="_blank" rel="noopener noreferrer" className="mt-10 block bg-foreground px-6 py-4 text-center font-medium text-background hover:bg-brand">
-            Comprar
-          </a>
+          <div className="mt-8">
+            <a href={p.buy_url} target="_blank" rel="noopener noreferrer" className="cta w-full bg-brand text-white hover:bg-foreground sm:w-auto">
+              Comprar<span className="sr-only"> (abre em nova aba)</span>
+              <span aria-hidden>↗</span>
+            </a>
+            <p className="mt-3 text-sm text-muted">Você será levado para {host} para concluir a compra.</p>
+          </div>
         ) : (
-          <span aria-disabled="true" className="mt-10 block cursor-not-allowed border border-line px-6 py-4 text-center text-muted">Em breve</span>
+          <p className="mt-3 text-muted">
+            A compra desta peça ainda não está aberta. Quer saber quando abrir?{" "}
+            <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer" className="font-medium text-brand underline underline-offset-4 hover:no-underline">
+              Fale com a gente no Instagram {INSTAGRAM.handle}<span className="sr-only"> (abre em nova aba)</span>
+            </a>
+          </p>
+        )}
+
+        {p.description && (
+          <section aria-labelledby="sobre" className="mt-10 border-t border-line pt-8">
+            <h2 id="sobre" className="text-xl font-semibold">Sobre a peça e o que vem nela</h2>
+            <p className="mt-3 whitespace-pre-line text-[1.05rem] leading-relaxed">{p.description.replace(/\r\n/g, "\n")}</p>
+          </section>
         )}
       </div>
     </div>
@@ -44,8 +63,10 @@ async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params
 
 export default function Produto({ params }: PageProps<"/produto/[slug]">) {
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 pt-6 md:px-10">
-      <Link href="/loja" className="mb-8 inline-block text-sm text-muted hover:text-brand">&larr; Loja</Link>
+    <section className="mx-auto w-full max-w-7xl px-5 pt-6 md:px-10 md:pt-8">
+      <Link href="/loja" className="mb-6 inline-flex min-h-11 items-center gap-2 font-medium text-brand hover:underline">
+        <span aria-hidden>←</span> Voltar ao catálogo
+      </Link>
       <Suspense fallback={<div className="h-screen" />}>
         <Detail params={params} />
       </Suspense>
