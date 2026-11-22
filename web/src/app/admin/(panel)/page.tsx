@@ -2,6 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { formatPrice, type Product } from "@/lib/products";
 import { syncNuvemshop } from "../actions";
+import { SyncButton } from "./SyncButton";
 
 export default async function AdminProducts({ searchParams }: PageProps<"/admin">) {
   const { sync } = await searchParams;
@@ -14,7 +15,7 @@ export default async function AdminProducts({ searchParams }: PageProps<"/admin"
         <h1 className="text-2xl font-bold">Produtos</h1>
         <div className="flex gap-2">
           <form action={syncNuvemshop}>
-            <button className="btn">Sincronizar Nuvemshop</button>
+            <SyncButton />
           </form>
           <Link href="/admin/produtos/novo" className="btn">Novo produto</Link>
         </div>
