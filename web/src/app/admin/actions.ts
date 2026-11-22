@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
+import { fetchNuvemshopProducts } from "@/lib/nuvemshop";
 
 const BUCKET = "product-images";
 const MAX_FILE = 5 * 1024 * 1024;
@@ -124,6 +125,21 @@ export async function deleteProduct(fd: FormData) {
   if (!error && data) await removeFiles(sb, data.images);
   revalidatePath("/", "layout");
   redirect("/admin");
+}
+
+// Slug = handle da Nuvemshop: produto já cadastrado aqui com o mesmo slug é atualizado, não duplicado.
+export async function syncNuvemshop() {
+  const sb = await requireAdmin();
+  let msg: string;
+  try {
+    const rows = await fetchNuvemshopProducts();
+    const { error } = await sb.from("products").upsert(rows, { onConflict: "slug" });
+    msg = error ? "Erro ao gravar: " + error.message : `${rows.length} produtos sincronizados.`;
+  } catch (e) {
+    msg = (e as Error).message;
+  }
+  revalidatePath("/", "layout");
+  redirect("/admin?sync=" + encodeURIComponent(msg));
 }
 
 export async function saveSettings(fd: FormData) {

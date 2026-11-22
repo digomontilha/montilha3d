@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin";
 import { formatPrice, type Product } from "@/lib/products";
+import { syncNuvemshop } from "../actions";
 
-export default async function AdminProducts() {
+export default async function AdminProducts({ searchParams }: PageProps<"/admin">) {
+  const { sync } = await searchParams;
   const sb = await requireAdmin();
   const { data } = await sb.from("products").select("*").order("position").order("name");
   const items = (data as Product[] | null) ?? [];
@@ -10,8 +12,14 @@ export default async function AdminProducts() {
     <>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Produtos</h1>
-        <Link href="/admin/produtos/novo" className="btn">Novo produto</Link>
+        <div className="flex gap-2">
+          <form action={syncNuvemshop}>
+            <button className="btn">Sincronizar Nuvemshop</button>
+          </form>
+          <Link href="/admin/produtos/novo" className="btn">Novo produto</Link>
+        </div>
       </div>
+      {sync && <p role="status" className="mb-4 text-sm">{sync}</p>}
       {items.length === 0 && <p className="text-muted">Nenhum produto ainda.</p>}
       <ul className="divide-y divide-line border-y border-line">
         {items.map((p) => (
