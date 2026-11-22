@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
-import { fetchNuvemshopProducts } from "@/lib/nuvemshop";
+import { registerWebhooks, syncProducts } from "@/lib/nuvemshop";
+import { headers } from "next/headers";
 
 const BUCKET = "product-images";
 const MAX_FILE = 5 * 1024 * 1024;
@@ -127,14 +128,20 @@ export async function deleteProduct(fd: FormData) {
   redirect("/admin");
 }
 
-// Slug = handle da Nuvemshop: produto já cadastrado aqui com o mesmo slug é atualizado, não duplicado.
+// Sincroniza agora e liga os webhooks, para as próximas mudanças chegarem sozinhas.
 export async function syncNuvemshop() {
   const sb = await requireAdmin();
   let msg: string;
   try {
-    const rows = await fetchNuvemshopProducts();
-    const { error } = await sb.from("products").upsert(rows, { onConflict: "slug" });
-    msg = error ? "Erro ao gravar: " + error.message : `${rows.length} produtos sincronizados.`;
+    const n = await syncProducts(sb);
+    msg = `${n} produtos sincronizados.`;
+    const host = (await headers()).get("host") ?? "";
+    if (host.startsWith("localhost")) {
+      msg += " Atualização automática só é ligada no site publicado.";
+    } else {
+      await registerWebhooks(`https://${host}`);
+      msg += " Atualização automática ligada.";
+    }
   } catch (e) {
     msg = (e as Error).message;
   }
