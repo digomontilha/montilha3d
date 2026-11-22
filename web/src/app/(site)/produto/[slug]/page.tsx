@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Gallery } from "@/components/Gallery";
-import { formatPrice, getProduct } from "@/lib/products";
+import { cartLink, formatPrice, getProduct } from "@/lib/products";
 import { INSTAGRAM } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/produto/[slug]">): Promise<Metadata> {
@@ -18,6 +18,8 @@ async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params
   if (!p) notFound();
   const price = formatPrice(p.price_cents);
   const host = p.buy_url && new URL(p.buy_url).hostname.replace(/^www\./, "");
+  // Sem variações sincronizadas (produto cadastrado à mão): um botão para o link de compra, como antes.
+  const buys = p.variants?.length ? p.variants : [{ id: 0, label: "" }];
   return (
     <div className="grid gap-10 md:grid-cols-12 md:gap-12">
       <div className="md:col-span-7">
@@ -35,11 +37,23 @@ async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params
 
         {p.buy_url ? (
           <div className="mt-8">
-            <a href={p.buy_url} target="_blank" rel="noopener noreferrer" className="cta w-full bg-brand text-white hover:bg-foreground sm:w-auto">
-              Comprar<span className="sr-only"> (abre em nova aba)</span>
-              <span aria-hidden>↗</span>
-            </a>
-            <p className="mt-3 text-sm text-muted">Você será levado para {host} para concluir a compra.</p>
+            {buys.length > 1 && <p className="mb-3 font-medium">Escolha a opção:</p>}
+            <div className="flex flex-wrap gap-3">
+              {buys.map((v) => (
+                <a
+                  key={v.id}
+                  href={v.id ? cartLink(p.buy_url!, v.id) : p.buy_url!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cta w-full bg-brand text-white hover:bg-foreground sm:w-auto"
+                >
+                  {v.label ? `Comprar ${v.label}` : "Comprar"}
+                  <span className="sr-only"> (abre o carrinho em nova aba)</span>
+                  <span aria-hidden>↗</span>
+                </a>
+              ))}
+            </div>
+            <p className="mt-3 text-sm text-muted">O produto vai direto para o carrinho em {host} para concluir a compra.</p>
           </div>
         ) : (
           <p className="mt-3 text-muted">

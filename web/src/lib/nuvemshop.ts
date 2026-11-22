@@ -11,7 +11,7 @@ type NsProduct = {
   published: boolean;
   canonical_url: string;
   images: { src: string; position: number }[];
-  variants: { price: string | null; promotional_price: string | null }[];
+  variants: { id: number; price: string | null; promotional_price: string | null; values: Record<string, string>[] }[];
 };
 
 const EVENTS = ["product/created", "product/updated", "product/deleted"];
@@ -48,6 +48,8 @@ export function toRow(p: NsProduct) {
     price_cents: price ? Math.round(Number(price) * 100) : null,
     images: [...p.images].sort((a, b) => a.position - b.position).map((i) => (i.src.startsWith("//") ? "https:" + i.src : i.src)),
     buy_url: p.canonical_url,
+    // label vazio = produto sem variações (um botão Comprar só).
+    variants: p.variants.map((x) => ({ id: x.id, label: (x.values ?? []).map(pt).join(" / ") })),
     active: p.published,
     updated_at: new Date().toISOString(),
   };

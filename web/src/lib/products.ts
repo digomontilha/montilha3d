@@ -11,6 +11,7 @@ export type Product = {
   price_cents: number | null;
   images: string[];
   buy_url: string | null;
+  variants: { id: number; label: string }[];
   featured: boolean;
   position: number;
   active: boolean;
@@ -56,6 +57,9 @@ export async function getSettings(): Promise<Settings> {
   const { data } = await sb.from("site_settings").select("hero_title,hero_subtitle,hero_image").maybeSingle();
   return (data as Settings | null) ?? defaultSettings;
 }
+
+// Link que põe a variação direto no carrinho da Nuvemshop (formato do "Compartilhar link do carrinho").
+export const cartLink = (buyUrl: string, variantId: number) => `${new URL(buyUrl).origin}/cart-link/${variantId}-1`;
 
 export const formatPrice = (cents: number | null) =>
   cents == null ? null : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(cents / 100);
