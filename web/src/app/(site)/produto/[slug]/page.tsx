@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Gallery } from "@/components/Gallery";
 import { cartLink, formatPrice, getProduct } from "@/lib/products";
-import { INSTAGRAM } from "@/lib/site";
+import { INSTAGRAM, WHATSAPP } from "@/lib/site";
 
 export async function generateMetadata({ params }: PageProps<"/produto/[slug]">): Promise<Metadata> {
   const p = await getProduct((await params).slug);
@@ -63,6 +63,20 @@ async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params
             </a>
           </p>
         )}
+
+        <div className="mt-8 rounded-md border border-line p-5">
+          <p className="font-semibold">Quer em outra cor, tamanho, quantidade ou um preço especial?</p>
+          <p className="mt-1 text-sm text-muted">Fale com a gente no WhatsApp. A mensagem já vai com o nome desta peça.</p>
+          <a
+            href={WHATSAPP.link(`Olá! Vi no site o produto "${p.name}" (https://montilha3d.com.br/produto/${p.slug}) e queria fazer um pedido personalizado / orçamento.`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-brand px-6 font-semibold text-brand transition-colors hover:bg-brand hover:text-white"
+          >
+            Pedido personalizado no WhatsApp<span className="sr-only"> (abre em nova aba)</span>
+            <span aria-hidden>↗</span>
+          </a>
+        </div>
 
         {p.description && (
           <section aria-labelledby="sobre" className="mt-10 border-t border-line pt-8">
