@@ -10,7 +10,12 @@ export async function generateMetadata({ params }: PageProps<"/produto/[slug]">)
   const p = await getProduct((await params).slug);
   if (!p) return {};
   const description = p.description.replace(/\s+/g, " ").trim().slice(0, 160) || `${p.name} no catálogo da Montilha 3D.`;
-  return { title: p.name, description, openGraph: { title: p.name, description, images: p.images.slice(0, 1) } };
+  return {
+    title: p.name,
+    description,
+    alternates: { canonical: `/produto/${p.slug}` },
+    openGraph: { title: p.name, description, images: p.images.slice(0, 1), url: `/produto/${p.slug}` },
+  };
 }
 
 async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params"] }) {
@@ -20,8 +25,30 @@ async function Detail({ params }: { params: PageProps<"/produto/[slug]">["params
   const host = p.buy_url && new URL(p.buy_url).hostname.replace(/^www\./, "");
   // Sem variações sincronizadas (produto cadastrado à mão): um botão para o link de compra, como antes.
   const buys = p.variants?.length ? p.variants : [{ id: 0, label: "" }];
+  // Dados estruturados: o Google pode mostrar foto, preço e "em estoque" no resultado da busca.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: p.name,
+    image: p.images,
+    description: p.description.slice(0, 5000),
+    brand: { "@type": "Brand", name: "Montilha 3D" },
+    ...(p.price_cents != null && p.buy_url
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: `https://montilha3d.com.br/produto/${p.slug}`,
+            priceCurrency: "BRL",
+            price: (p.price_cents / 100).toFixed(2),
+            availability: "https://schema.org/InStock",
+            seller: { "@type": "Organization", name: "Montilha 3D" },
+          },
+        }
+      : {}),
+  };
   return (
     <div className="grid gap-10 md:grid-cols-12 md:gap-12">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <div className="md:col-span-7">
         <Gallery images={p.images} name={p.name} />
       </div>

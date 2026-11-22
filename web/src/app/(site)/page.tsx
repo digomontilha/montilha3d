@@ -2,7 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Availability, ProductCard } from "@/components/ProductCard";
+import type { Metadata } from "next";
 import { formatPrice, getFeatured, getProducts, getSettings } from "@/lib/products";
+import { INSTAGRAM, TIKTOK } from "@/lib/site";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
+// Quem é a loja, para o Google montar o painel da marca (logo, redes sociais).
+const orgJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Montilha 3D",
+  url: "https://montilha3d.com.br",
+  logo: "https://montilha3d.com.br/logo-montilha3d.png",
+  sameAs: [INSTAGRAM.url, TIKTOK.url],
+  contactPoint: { "@type": "ContactPoint", telephone: "+55-11-91460-8191", contactType: "customer service", availableLanguage: "Portuguese" },
+});
 
 // Vitrine: produtos com "Destaque na home"; sem nenhum, os primeiros ativos por Posição (comportamento anterior).
 async function Vitrine() {
@@ -70,6 +85,7 @@ const steps = [
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: orgJsonLd }} />
       <Suspense fallback={<div className="h-[80vh]" />}>
         <Vitrine />
       </Suspense>

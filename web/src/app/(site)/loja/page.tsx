@@ -7,6 +7,7 @@ import { getProducts } from "@/lib/products";
 export const metadata: Metadata = {
   title: "Catálogo",
   description: "Catálogo da Montilha 3D: produtos 3D para decorar e presentear, com fotos, preço e o que vem em cada peça.",
+  alternates: { canonical: "/loja" },
 };
 
 async function Grid({ searchParams }: { searchParams: PageProps<"/loja">["searchParams"] }) {

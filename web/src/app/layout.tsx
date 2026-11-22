@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://montilha3d.com.br"),
   title: { default: "Montilha 3D · Produtos 3D para decorar e presentear", template: "%s · Montilha 3D" },
   description,
-  openGraph: { siteName: "Montilha 3D", locale: "pt_BR", type: "website", description },
+  openGraph: { siteName: "Montilha 3D", locale: "pt_BR", type: "website", description, images: ["/logo-montilha3d.png"] },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
