@@ -8,9 +8,13 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    remotePatterns: supabase
-      ? [{ protocol: localFake ? "http" : "https", hostname: supabase.hostname, port: supabase.port, pathname: "/storage/v1/object/public/**" }]
-      : [],
+    remotePatterns: [
+      ...(supabase
+        ? [{ protocol: localFake ? ("http" as const) : ("https" as const), hostname: supabase.hostname, port: supabase.port, pathname: "/storage/v1/object/public/**" }]
+        : []),
+      // Fotos dos produtos sincronizados da Nuvemshop.
+      { protocol: "https", hostname: "**.mitiendanube.com" },
+    ],
     dangerouslyAllowLocalIP: localFake,
   },
   experimental: { serverActions: { bodySizeLimit: "12mb" } },
