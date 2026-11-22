@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/LogoMark";
 import { Suspense } from "react";
 import { NavLinks, NavList } from "@/components/NavLinks";
-import { INSTAGRAM, TIKTOK } from "@/lib/site";
+import { INSTAGRAM, TIKTOK, WHATSAPP } from "@/lib/site";
 
 const social = "inline-flex min-h-11 items-center gap-2 rounded-md border-2 border-brand px-5 font-semibold text-brand hover:bg-brand hover:text-white";
 
@@ -30,8 +30,15 @@ export default function SiteLayout({ children }: LayoutProps<"/">) {
           </div>
           <div className="md:col-span-5 md:col-start-8">
             <h2 className="font-display text-2xl">Contato</h2>
-            <p className="mt-2 text-muted">Fale com a gente e acompanhe as novidades no Instagram e no TikTok.</p>
+            <p className="mt-2 text-muted">Fale com a gente pelo WhatsApp e acompanhe as novidades no Instagram e no TikTok.</p>
             <div className="mt-4 flex flex-wrap gap-3">
+            <a href={WHATSAPP.link("Olá! Vim pelo site da Montilha 3D.")} target="_blank" rel="noopener noreferrer" className={social}>
+              <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                <path d="M3.5 20.5l1.3-4A8.5 8.5 0 1 1 8 19.3l-4.5 1.2Z" />
+                <path d="M9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 .8a4.5 4.5 0 0 1-2.3-2.3l.8-1-1-2-1.5 1Z" fill="currentColor" stroke="none" />
+              </svg>
+              WhatsApp<span className="sr-only"> (11) 91460-8191 (abre em nova aba)</span>
+            </a>
             <a
               href={INSTAGRAM.url}
               target="_blank"
